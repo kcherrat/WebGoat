@@ -6,7 +6,6 @@ package org.owasp.webgoat.lessons.sqlinjection.introduction;
 
 import static org.owasp.webgoat.container.assignments.AttackResultBuilder.failed;
 import static org.owasp.webgoat.container.assignments.AttackResultBuilder.success;
-
 import java.io.IOException;
 import java.sql.*;
 import org.owasp.webgoat.container.LessonDataSource;
@@ -42,7 +41,7 @@ public class SqlInjectionLesson5b implements AssignmentEndpoint {
   }
 
   protected AttackResult injectableQuery(String login_count, String accountName) {
-    String queryString = "SELECT * From user_data WHERE Login_Count = ? and userid= " + accountName;
+    String queryString = "SELECT * From user_data WHERE Login_Count = ? and userid = ?";
     try (Connection connection = dataSource.getConnection()) {
       PreparedStatement query =
           connection.prepareStatement(
@@ -61,8 +60,8 @@ public class SqlInjectionLesson5b implements AssignmentEndpoint {
                     + queryString.replace("?", login_count))
             .build();
       }
-
       query.setInt(1, count);
+      query.setString(2, accountName);
       // String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid
       // = " + accountName, ;
       try {
