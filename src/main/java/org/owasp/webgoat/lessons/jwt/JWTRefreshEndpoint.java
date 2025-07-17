@@ -14,6 +14,10 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -119,11 +123,15 @@ public class JWTRefreshEndpoint implements AssignmentEndpoint {
     try {
       Jwt<Header, Claims> jwt =
           Jwts.parser().setSigningKey(JWT_PASSWORD).parse(token.replace("Bearer ", ""));
+      // block if : if the token is valid extract claims
       user = (String) jwt.getBody().get("user");
       refreshToken = (String) json.get("refresh_token");
     } catch (ExpiredJwtException e) {
       user = (String) e.getClaims().get("user");
       refreshToken = (String) json.get("refresh_token");
+    }
+    catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     if (user == null || refreshToken == null) {
