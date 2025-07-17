@@ -4,8 +4,11 @@
  */
 package org.owasp.webgoat.lessons.pathtraversal;
 
+import static org.owasp.webgoat.container.assignments.AttackResultBuilder.failed;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.util.regex.Pattern;
 
 import org.owasp.webgoat.container.CurrentUsername;
 import org.owasp.webgoat.container.assignments.AssignmentHints;
@@ -40,7 +43,23 @@ public class ProfileUploadFix extends ProfileUploadBase {
       @RequestParam("uploadedFileFix") MultipartFile file,
       @RequestParam(value = "fullNameFix", required = false) String fullName,
       @CurrentUsername String username) {
-    return super.execute(file, fullName != null ? fullName.replace("../", "") : "", username);
+
+    if (fullName != null && !fullName.isEmpty()) {
+        Pattern allowedCharsPattern = Pattern.compile("^[a-zA-Z0-9_.-]+$");
+
+      if (!allowedCharsPattern.matcher(fullName).matches()) {
+          return failed(this)
+              .output("Filename contains invalid characters.")
+              .build();
+      }
+      if (fullName.startsWith(".") || fullName.contains("..") || fullName.contains("/") || fullName.contains("\\")) {
+          return failed(this)
+              .output("Filename contains forbidden path components or separators.")
+              .build();
+      }
+    }
+    
+    return super.execute(file, fullName, username);
   }
 
   @GetMapping("/PathTraversal/profile-picture-fix")
