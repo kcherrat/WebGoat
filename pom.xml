@@ -408,22 +408,30 @@
   </dependencies>
 
   <repositories>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
+      <repository>
+          <id>central-artifactory</id>
+          <name>Artifactory Maven Virtual Repo</name>
+          <url>https://trial4hb97k.jfrog.io/artifactory/maven-virtual</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
   </repositories>
   <pluginRepositories>
-    <pluginRepository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </pluginRepository>
+      <pluginRepository>
+          <id>central-artifactory</id>
+          <name>Artifactory Maven Virtual Repo</name>
+          <url>https://trial4hb97k.jfrog.io/artifactory/maven-virtual</url>
+          <releases>
+              <enabled>true</enabled>
+          </releases>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </pluginRepository>
   </pluginRepositories>
 
   <build>
